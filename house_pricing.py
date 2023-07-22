@@ -1,60 +1,68 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 
-# df = pd.read_csv('CAhousing.csv', delim_whitespace=True)
+# Load the dataset
 df = pd.read_csv('CAhousing.csv', sep=',')
-print(df.columns)
-# df.head() will display the first few rows of the dataset.
-# df.info() will give a summary of the dataset, including the number of non-null entries in each column.
-# df.describe() will provide descriptive statistics for each column.
 
-# print(df.head())
-# print(df.info())
-# print(df.describe())
+# Separate numerical and categorical columns
+num_cols = df.select_dtypes(include=['int64', 'float64']).columns
+cat_cols = df.select_dtypes(include=['object']).columns
 
-# print(df.isnull().sum())
+# Check for missing values in numerical columns and fill them
+df[num_cols] = df[num_cols].fillna(df[num_cols].mean())
 
-# Set the style for seaborn
+# Check for missing values in categorical columns and fill them
+for col in cat_cols:
+    df[col].fillna(df[col].mode()[0], inplace=True)
+
+# Visualize the distribution of target variable
 sns.set()
-
-# Create the histogram
 plt.figure(figsize=(10,6))
 sns.histplot(df['median_house_value'], bins=30, kde=True)
 plt.title('Distribution of median_house_value')
 plt.show()
 
-# data preprocessing
-# Feature scaling:standardization or normalization
-scaler = StandardScaler()
-df_scaled = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
-# Encoding Categorical Variables
-# df_encoded = pd.get_dummies(df, columns=['ocean_proximity'])
+sns.set()
+plt.figure(figsize=(10,6))
+sns.scatterplot(x = df['median_house_value'], y =df['median_income'])
+plt.title('Median Income vs Median House Value')
+plt.show()
+
+
+# Apply one-hot encoding to 'ocean_proximity'
+df = pd.get_dummies(df, columns=['ocean_proximity'], prefix="", prefix_sep="")
+
 # Separate target variable
 target = df['median_house_value']
 df_features = df.drop('median_house_value', axis=1)
 
-# Apply one-hot encoding to 'ocean_proximity'
-encoder = OneHotEncoder()
-ocean_proximity_encoded = encoder.fit_transform(df_features[['ocean_proximity']]).toarray()
-
-# Construct new dataframe with encoded 'ocean_proximity' and drop the original column
-df_encoded = pd.DataFrame(ocean_proximity_encoded, columns=encoder.categories_[0])
-df_features = pd.concat([df_features.drop('ocean_proximity', axis=1), df_encoded], axis=1)
-
-# Scale numeric features only
+# Feature scaling: standardization
 scaler = StandardScaler()
 df_scaled = pd.DataFrame(scaler.fit_transform(df_features), columns=df_features.columns)
 
 # Append target back to the DataFrame
-df_scaled = pd.concat([df_scaled, target], axis=1)
+df_scaled = pd.concat([df_scaled, target.reset_index(drop=True)], axis=1)
 
-
-# Splitting the Data, This allows you to evaluate how well your model will perform on unseen data
-X = df.drop('median_house_value', axis=1)
-y = df['median_house_value']
-
+# Splitting the Data
+X = df_scaled.drop('median_house_value', axis=1)
+y = df_scaled['median_house_value']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train a Model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions and calculate mean squared error
+y_train_pred = model.predict(X_train)
+y_test_pred = model.predict(X_test)
+mse_train = mean_squared_error(y_train, y_train_pred)
+mse_test = mean_squared_error(y_test, y_test_pred)
+
+print('Training MSE:', mse_train)
+print('Test MSE:', mse_test)
+
