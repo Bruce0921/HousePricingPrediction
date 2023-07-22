@@ -66,3 +66,5 @@ mse_test = mean_squared_error(y_test, y_test_pred)
 print('Training MSE:', mse_train)
 print('Test MSE:', mse_test)
 
+# Training MSE: 4683273330.307014
+# Test MSE: 4905367799.608703
