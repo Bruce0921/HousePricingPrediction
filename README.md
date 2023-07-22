@@ -1,6 +1,6 @@
 # HousePricingPrediction
 Trying ML
-##Data Loading & Preprocessing
+## Data Loading & Preprocessing
 
 First, it loads a dataset from a CSV file 'CAhousing.csv' into a pandas DataFrame.
 
@@ -12,7 +12,7 @@ The distribution of the target variable, 'median_house_value', is visualized usi
 
 The categorical feature 'ocean_proximity' is transformed into several binary features using one-hot encoding. One-hot encoding is a common way to handle categorical data in machine learning, as it allows us to convert categories into a format that can be provided to a machine learning model.
 
-##Data Splitting & Standardization
+## Data Splitting & Standardization
 
 The target variable ('median_house_value') is separated from the other features.
 
@@ -22,7 +22,7 @@ The target is then appended back to the DataFrame.
 
 The data is split into a training set and a test set. The training set is used to train the machine learning model, and the test set is used to evaluate its performance.
 
-##Model Training & Evaluation
+## Model Training & Evaluation
 
 A linear regression model is instantiated and fitted using the training data.
 
