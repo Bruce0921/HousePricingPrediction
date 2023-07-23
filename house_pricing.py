@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -66,5 +67,14 @@ mse_test = mean_squared_error(y_test, y_test_pred)
 print('Training MSE:', mse_train)
 print('Test MSE:', mse_test)
 
-# Training MSE: 4683273330.307014
-# Test MSE: 4905367799.608703
+# Predicted vs Actual scatter plot
+plt.scatter(y_test, y_test_pred)
+plt.xlabel('Actual values')
+plt.ylabel('Predicted values')
+plt.title('Actual vs Predicted values')
+
+# Line of best fit
+m, b = np.polyfit(y_test, y_test_pred, 1)
+plt.plot(y_test, m*y_test + b, color='red')
+
+plt.show()
