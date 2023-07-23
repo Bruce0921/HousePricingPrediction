@@ -38,4 +38,6 @@ The output you're seeing, 'Training MSE' and 'Test MSE', are the MSE values for 
 
 ![Image](prediction.png)
 
+![Image](prediction2.png)
+
 
