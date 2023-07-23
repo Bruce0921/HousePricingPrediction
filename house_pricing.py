@@ -16,7 +16,7 @@ cat_cols = df.select_dtypes(include=['object']).columns
 
 # Check for missing values in numerical columns and fill them
 df[num_cols] = df[num_cols].fillna(df[num_cols].mean())
-
+print(df.columns)
 # Check for missing values in categorical columns and fill them
 for col in cat_cols:
     df[col].fillna(df[col].mode()[0], inplace=True)
@@ -76,5 +76,19 @@ plt.title('Actual vs Predicted values')
 # Line of best fit
 m, b = np.polyfit(y_test, y_test_pred, 1)
 plt.plot(y_test, m*y_test + b, color='red')
+
+plt.show()
+
+# Retrieve the 'median_income' column from the test data.
+# Remember, since 'median_income' is standardized, we need to inverse transform it back to original scale.
+median_income_test = scaler.inverse_transform(X_test)[:, df_features.columns.get_loc('median_income')]
+
+# Create scatter plots
+plt.scatter(median_income_test, y_test, color='blue', label='Actual values')
+plt.scatter(median_income_test, y_test_pred, color='red', label='Predicted values')
+plt.xlabel('Median Income')
+plt.ylabel('House Value')
+plt.title('Median Income vs House Value')
+plt.legend()
 
 plt.show()
